@@ -1,6 +1,6 @@
-from agent import Agent
+from src.environments import CoinFlipEnv
 
-from coin_flip_env import CoinFlipEnv
+from .agent import Agent
 
 
 class CounterAgent(Agent):

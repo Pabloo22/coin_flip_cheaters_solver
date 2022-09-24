@@ -1,10 +1,7 @@
 import tqdm
 
-from coin_flip_env import CoinFlipEnv
-from counter_agent import CounterAgent
-from random_agent import RandomAgent
-from double_q_learning import DoubleQLearning
-
+from environments import CoinFlipEnv
+from agents import RandomAgent, CounterAgent, DoubleQLearning
 
 ACTIONS = {0: "flip", 1: "label as cheater", 2: "label as not a cheater"}
 
@@ -36,7 +33,7 @@ def baselines(n_episodes=1_000_000):
 def train_double_q_learning():
     env = CoinFlipEnv()
     agent = DoubleQLearning(env)
-    n_episodes = 1_000_000
+    n_episodes = 1_000
     previous_record = -0.612844
     agent.fit(n_episodes=n_episodes,
               verbose=True,
@@ -90,12 +87,20 @@ def get_action_double_q_learning(n_heads, n_coin_flips):
     print(f"Action: {ACTIONS[action]}")
 
 
-def main():
-    avg_score, max_score = play_double_q_learning(verbose=False, n_episodes=10_000)
+def get_scores_double_q_learning():
+    avg_score, max_score = play_double_q_learning(verbose=False, n_episodes=100)
     print(f"Average score: {avg_score}")
     print(f"Max score: {max_score}")
     # Average score: 146.23719999999997
     # Max score: 8239 (world record: 4541)
+
+
+def main():
+    baselines()
+    # train_double_q_learning()
+    get_scores_double_q_learning()
+    play_double_q_learning(verbose=True, n_episodes=1)
+    get_action_double_q_learning(n_heads=0, n_coin_flips=0)
 
 
 if __name__ == "__main__":

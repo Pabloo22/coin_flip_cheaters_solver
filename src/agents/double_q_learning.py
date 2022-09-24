@@ -2,8 +2,8 @@ import numpy as np
 import tqdm
 from gym import spaces
 
-from agent import Agent
-from coin_flip_env import CoinFlipEnv
+from .agent import Agent
+from src.environments import CoinFlipEnv
 
 
 class DoubleQLearning(Agent):
