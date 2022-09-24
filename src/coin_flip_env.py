@@ -71,7 +71,7 @@ class CoinFlipEnv(gym.Env):
             action: The action to perform.
                 - 0: Flip a coin.
                 - 1: label the blob as cheater.
-                - 2: label the blob as not cheater.
+                - 2: label the blob as fair.
         """
         info = {}
         terminated = False
@@ -113,13 +113,13 @@ class CoinFlipEnv(gym.Env):
             if not terminated:
                 print(f"number of heads {self._n_heads}/{self._n_coin_flips}")
             else:
-                label = "cheater" if self._cheater else "not a cheater"
-                print(f"The bob was a {label}!")
+                label = "a cheater" if self._cheater else "fair"
+                print(f"The bob was {label}!")
 
     def close(self):
         raise NotImplementedError()
 
-    def play(self, agent: Callable[[spaces.Dict], int], n_episodes: int = 1):
+    def play(self, agent: Callable[[spaces.Dict], int], n_episodes: int = 1, verbose: bool = True):
         """Plays the game with the agent.
 
         Args:
@@ -134,7 +134,8 @@ class CoinFlipEnv(gym.Env):
                 action = agent(obs)
                 obs, reward, terminated, truncated, info = self.step(action)
                 total_reward += reward
-                self.render(terminated=terminated)
+                if verbose:
+                    self.render(terminated=terminated)
 
         return total_reward
 

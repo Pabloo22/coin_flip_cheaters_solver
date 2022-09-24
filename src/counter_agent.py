@@ -12,7 +12,7 @@ class CounterAgent(Agent):
         self.head_threshold = round(self.percentage_threshold * n_coin_flips)
         self.tail_threshold = n_coin_flips - self.head_threshold
 
-    def __call__(self, obs):
+    def select_action(self, obs, **kwargs) -> int:
         percentage_heads, n_coin_flips = obs["heads"][0], obs["n_coin_flips"]
         n_heads = round(percentage_heads * n_coin_flips)
         n_tails = n_coin_flips - n_heads

@@ -1,5 +1,4 @@
-import gym.spaces
-import numpy as np
+import tqdm
 
 from coin_flip_env import CoinFlipEnv
 from counter_agent import CounterAgent
@@ -53,21 +52,33 @@ def train_double_q_learning():
         agent.save_learning("double_q_learning")
 
 
-def play_double_q_learning():
+def play_double_q_learning(verbose=False, n_episodes=1_000):
     env = CoinFlipEnv()
     agent = DoubleQLearning(env)
     agent.load("double_q_learning.npz")
-    coins_left = 100
-    score = 0
-    while coins_left > 0:
-        diff = env.play(agent)
-        print("reward:", diff)
-        score += 1 if diff > -30 else 0
-        print(f"score: +{int(diff > -30)}")
-        coins_left += diff
-        print(f"Coins left: {coins_left}")
+    return play_real_game(agent, verbose=verbose, n_episodes=n_episodes)
 
-    return score
+
+def play_real_game(agent, verbose=True, n_episodes=1_000, init_coins=100):
+    env = agent.env
+    max_score = 0
+    avg_score = 0
+    for i in tqdm.tqdm(range(1, n_episodes + 1)):
+        coins_left = init_coins
+        score = 0
+        while coins_left > 0:
+            reward = env.play(agent, verbose=verbose)
+            score += 1 if reward >= -30 else 0
+            coins_left += reward
+            if verbose:
+                print(f"coins_left: {coins_left}, reward: {reward}")
+                print(f"score: +{int(reward > -30)}")
+
+        if score > max_score:
+            max_score = score
+        avg_score += (score - avg_score) / i
+
+    return avg_score, max_score
 
 
 def get_action_double_q_learning(n_heads, n_coin_flips):
@@ -80,8 +91,11 @@ def get_action_double_q_learning(n_heads, n_coin_flips):
 
 
 def main():
-    score = play_double_q_learning()
-    print(f"score: {score}")
+    avg_score, max_score = play_double_q_learning(verbose=False, n_episodes=10_000)
+    print(f"Average score: {avg_score}")
+    print(f"Max score: {max_score}")
+    # Average score: 146.23719999999997
+    # Max score: 8239 (world record: 4541)
 
 
 if __name__ == "__main__":
